@@ -1,21 +1,18 @@
 package com.example.testproject.screens.view
 
-import android.R
-import android.graphics.Paint
+import com.example.testproject.R
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -28,11 +25,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.layout.ModifierLocalBeyondBoundsLayout
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
@@ -40,7 +35,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.app.NotificationCompat
 import androidx.navigation.NavHostController
 import com.example.testproject.assets.roboto
 
@@ -70,7 +64,9 @@ fun Auth(navController: NavHostController)
                 style = TextStyle(
                     fontWeight = FontWeight.Normal,
                 ),
-                color = Color(0xFFF2F2F3)
+                color = Color(0xFFF2F2F3),
+                letterSpacing = 0.sp,
+                lineHeight = 36.sp
             )
         }
         Box(
@@ -90,7 +86,9 @@ fun Auth(navController: NavHostController)
                     style = TextStyle(
                         fontWeight = FontWeight.Medium
                     ),
-                    color = Color(0xFFF2F2F3)
+                    color = Color(0xFFF2F2F3),
+                    letterSpacing = 0.15.sp,
+                    lineHeight = 18.sp
                 )
                 TextField(
                     value = email.value,
@@ -98,10 +96,11 @@ fun Auth(navController: NavHostController)
                     placeholder = {
                         Text(
                             "example@gmail.com",
-                            fontSize = 16.sp,
+                            fontSize = 14.sp,
                             fontFamily = roboto,
                             color = Color(0xFFF2F2F3).copy(alpha = 0.5f),
-
+                            letterSpacing = 0.25.sp,
+                            lineHeight = 20.sp
                             )
                     },
                     shape = RoundedCornerShape(30.dp),
@@ -130,7 +129,9 @@ fun Auth(navController: NavHostController)
                     style = TextStyle(
                         fontWeight = FontWeight.Medium
                     ),
-                    color = Color(0xFFF2F2F3)
+                    color = Color(0xFFF2F2F3),
+                    letterSpacing = 0.15.sp,
+                    lineHeight = 18.sp
                 )
                 TextField(
                     value = password.value,
@@ -138,10 +139,11 @@ fun Auth(navController: NavHostController)
                     placeholder = {
                         Text(
                             "Введите пароль",
-                            fontSize = 16.sp,
+                            fontSize = 14.sp,
                             fontFamily = roboto,
                             color = Color(0xFFF2F2F3).copy(alpha = 0.5f),
-
+                            letterSpacing = 0.25.sp,
+                            lineHeight = 20.sp
                             )
                     },
                     shape = RoundedCornerShape(30.dp),
@@ -166,7 +168,7 @@ fun Auth(navController: NavHostController)
             }
         }
         Button(
-            onClick = {},
+            onClick = {navController.navigate("Main")},
             modifier = Modifier
                 .height(40.dp)
                 .fillMaxWidth()
@@ -176,19 +178,30 @@ fun Auth(navController: NavHostController)
                 containerColor = Color.Transparent
             )
         ) {
-            Text("Вход", color = Color(0xFFF2F2F3), fontFamily = roboto, fontSize = 20.sp, textAlign = TextAlign.Center)
+            Text("Вход",
+                color = Color(0xFFF2F2F3),
+                fontFamily = roboto,
+                fontSize = 15.sp,
+                textAlign = TextAlign.Center,
+                style = TextStyle(
+                fontWeight = FontWeight.Medium,
+                    letterSpacing = 0.1.sp,
+                    lineHeight = 20.sp
+            ),)
         }
         Column(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 16.dp)
+                .padding(top = 20.dp)
         ) {
             val textStyle = TextStyle(
                 fontSize = 12.sp,
                 fontFamily = roboto,
-                fontWeight = FontWeight.SemiBold
+                fontWeight = FontWeight.SemiBold,
+                letterSpacing = 0.4.sp,
+                lineHeight = 15.sp
             )
 
             Row(horizontalArrangement = Arrangement.Center, modifier = Modifier.padding(bottom = 8.dp)) {
@@ -206,7 +219,6 @@ fun Auth(navController: NavHostController)
                 .background(color = Color(0xFF4D555E))
         )
         Row(
-            horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
                 .fillMaxWidth()
@@ -215,31 +227,26 @@ fun Auth(navController: NavHostController)
             Box(
                 modifier = Modifier
                     .weight(1f)
-                    .padding(end = 4.dp)
+                    .padding(end = 8.dp)
             ) {
                 Button(
                     onClick = {},
                     modifier = Modifier
-                        .height(40.dp)
+                        .height(50.dp)
                         .fillMaxWidth()
                         .background(color = Color(0xFF2683ED), shape = RoundedCornerShape(30.dp)),
                     colors = ButtonDefaults.buttonColors(
                         containerColor = Color.Transparent
                     )
                 ) {}
-                val context = LocalContext.current
                 Image(
                     painter = painterResource(
-                        id = context.resources.getIdentifier(
-                            "vk",
-                            "drawable",
-                            context.packageName
-                        )
+                        id = R.drawable.vk
                     ),
                     contentDescription = "VK",
                     contentScale = ContentScale.Fit,
                     modifier = Modifier
-                        .size(width = 50.dp, height = 40.dp)
+                        .size(width = 60.dp, height = 50.dp)
                         .align(Alignment.Center)
                 )
             }
@@ -247,12 +254,12 @@ fun Auth(navController: NavHostController)
             Box(
                 modifier = Modifier
                     .weight(1f)
-                    .padding(start = 4.dp)
+                    .padding(start = 8.dp)
             ) {
                 Button(
                     onClick = {},
                     modifier = Modifier
-                        .height(40.dp)
+                        .height(50.dp)
                         .fillMaxWidth()
                         .background(
                             brush = Brush.horizontalGradient(
@@ -264,19 +271,14 @@ fun Auth(navController: NavHostController)
                         containerColor = Color.Transparent
                     )
                 ) {}
-                val context = LocalContext.current
                 Image(
                     painter = painterResource(
-                        id = context.resources.getIdentifier(
-                            "ok",
-                            "drawable",
-                            context.packageName
-                        )
+                        id = R.drawable.ok
                     ),
                     contentDescription = "OK",
                     contentScale = ContentScale.Fit,
                     modifier = Modifier
-                        .size(width = 50.dp, height = 40.dp)
+                        .size(width = 60.dp, height = 50.dp)
                         .align(Alignment.Center)
                 )
             }
