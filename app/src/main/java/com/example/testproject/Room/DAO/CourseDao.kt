@@ -17,4 +17,10 @@ interface CourseDao {
 
     @Query("DELETE FROM courses")
     fun deleteAll(): Int
+
+    @Query("SELECT * FROM courses ORDER BY publishDate DESC")
+    fun getCoursesSortedByPublishDate(): Flow<List<Course>>
+
+    @Query("UPDATE courses SET hasLike = :isFavorite WHERE id = :courseId")
+    fun setFavorite(courseId: Int, isFavorite: Boolean)
 }

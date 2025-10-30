@@ -2,6 +2,7 @@ package com.example.testproject.screens
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -31,7 +32,7 @@ import com.example.testproject.Room.Entity.Course
 import com.example.testproject.assets.roboto
 
 @Composable
-fun CourseCard(course: Course) {
+fun CourseCard(course: Course, onFavoriteClick: (Int) -> Unit) {
     Card(
         modifier = Modifier
             .padding(horizontal = 16.dp)
@@ -123,10 +124,21 @@ fun CourseCard(course: Course) {
                                 shape = RoundedCornerShape(50)
                             )
                             .size(28.dp)
+                            .clickable { onFavoriteClick(course.id) }
                     ) {
                         Image(
-                            painter = painterResource(id = R.drawable.bookmark),
-                            contentDescription = "bookmark",
+                            painter = painterResource(
+                                id = if (course.hasLike) {
+                                    R.drawable.bookmarkf
+                                } else {
+                                    R.drawable.bookmark
+                                }
+                            ),
+                            contentDescription = if (course.hasLike) {
+                                "Remove from favorites"
+                            } else {
+                                "Add to favorites"
+                            },
                             contentScale = ContentScale.Fit,
                             modifier = Modifier
                                 .size(16.dp)

@@ -5,6 +5,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.testproject.screens.view.Auth
+import com.example.testproject.screens.view.Favorite
 import com.example.testproject.screens.view.Main
 
 @Composable
@@ -19,6 +20,9 @@ fun navigation()
         }
         composable("Main"){
             Main(navController)
+        }
+        composable ("Favorite"){
+            Favorite(navController)
         }
     }
 }

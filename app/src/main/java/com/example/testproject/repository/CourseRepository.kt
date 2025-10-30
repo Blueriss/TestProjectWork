@@ -14,24 +14,40 @@ class CourseRepository(
 ) {
     fun getCourses(): Flow<List<Course>> = courseDao.getAllCourses()
     fun getFavoriteCourses(): Flow<List<Course>> = courseDao.getFavoriteCourses()
+    fun getCoursesSortedByPublishDate(): Flow<List<Course>> = courseDao.getCoursesSortedByPublishDate()
 
     suspend fun refreshCourses() {
         try {
+            val currentFavorites = withContext(Dispatchers.IO) {
+                courseDao.getFavoriteCourses().first()
+            }
+            val favoriteIds = currentFavorites.map { it.id }.toSet()
             val response = apiService.getCourses()
-
             if (response.isSuccessful) {
                 val courses = response.body()?.courses ?: emptyList()
-
                 withContext(Dispatchers.IO) {
                     courseDao.deleteAll()
                     courses.forEach { course ->
-                        courseDao.insert(course)
+                        val updatedCourse = course.copy(
+                            hasLike = course.id in favoriteIds
+                        )
+                        courseDao.insert(updatedCourse)
                     }
                 }
-
             }
         } catch (e: Exception) {
             throw e
+        }
+    }
+
+    suspend fun toggleFavorite(courseId: Int) {
+        withContext(Dispatchers.IO) {
+            val allCourses = courseDao.getAllCourses().first()
+            val course = allCourses.find { it.id == courseId }
+            course?.let {
+                val newFavoriteState = !it.hasLike
+                courseDao.setFavorite(courseId, newFavoriteState)
+            }
         }
     }
 }

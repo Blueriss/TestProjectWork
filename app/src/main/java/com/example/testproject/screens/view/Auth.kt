@@ -1,6 +1,5 @@
 package com.example.testproject.screens.view
 
-import com.example.testproject.R
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -21,8 +20,9 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
@@ -35,28 +35,41 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import com.example.testproject.R
 import com.example.testproject.assets.roboto
+import com.example.testproject.screens.viewmodel.AuthViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Auth(navController: NavHostController)
-{
-    val email = remember { mutableStateOf("") }
-    val password = remember { mutableStateOf("") }
+fun Auth(navController: NavHostController) {
+    val viewModel: AuthViewModel = viewModel()
+
+    LaunchedEffect(Unit) {
+        viewModel.setNavigationCallback {
+            navController.navigate("Main") {
+                popUpTo("auth") { inclusive = true }
+            }
+        }
+    }
+
+    val email by viewModel.email.collectAsState()
+    val password by viewModel.password.collectAsState()
+    val isButtonEnabled by viewModel.isButtonEnabled.collectAsState()
+
+    val context = LocalContext.current
 
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .fillMaxHeight()
             .background(color = Color(0xFF151515))
-    )
-    {
+    ) {
         Box(
             modifier = Modifier
                 .padding(start = 16.dp, top = 140.dp)
-        )
-        {
+        ) {
             Text(
                 text = "Вход",
                 fontSize = 28.sp,
@@ -69,13 +82,13 @@ fun Auth(navController: NavHostController)
                 lineHeight = 36.sp
             )
         }
+
         Box(
             modifier = Modifier
                 .height(230.dp)
                 .padding(horizontal = 16.dp)
                 .padding(top = 28.dp)
-        )
-        {
+        ) {
             Column(
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
@@ -91,8 +104,10 @@ fun Auth(navController: NavHostController)
                     lineHeight = 18.sp
                 )
                 TextField(
-                    value = email.value,
-                    onValueChange = { newText -> email.value = newText },
+                    value = email,
+                    onValueChange = { newText ->
+                        viewModel.onEmailChange(newText)
+                    },
                     placeholder = {
                         Text(
                             "example@gmail.com",
@@ -101,7 +116,7 @@ fun Auth(navController: NavHostController)
                             color = Color(0xFFF2F2F3).copy(alpha = 0.5f),
                             letterSpacing = 0.25.sp,
                             lineHeight = 20.sp
-                            )
+                        )
                     },
                     shape = RoundedCornerShape(30.dp),
                     colors = TextFieldDefaults.colors(
@@ -122,6 +137,7 @@ fun Auth(navController: NavHostController)
                         .heightIn(min = 40.dp)
                         .fillMaxWidth()
                 )
+
                 Text(
                     text = "Пароль",
                     fontSize = 16.sp,
@@ -134,8 +150,10 @@ fun Auth(navController: NavHostController)
                     lineHeight = 18.sp
                 )
                 TextField(
-                    value = password.value,
-                    onValueChange = { newText -> email.value = newText },
+                    value = password,
+                    onValueChange = { newText ->
+                        viewModel.onPasswordChange(newText)
+                    },
                     placeholder = {
                         Text(
                             "Введите пароль",
@@ -144,7 +162,7 @@ fun Auth(navController: NavHostController)
                             color = Color(0xFFF2F2F3).copy(alpha = 0.5f),
                             letterSpacing = 0.25.sp,
                             lineHeight = 20.sp
-                            )
+                        )
                     },
                     shape = RoundedCornerShape(30.dp),
                     colors = TextFieldDefaults.colors(
@@ -167,28 +185,36 @@ fun Auth(navController: NavHostController)
                 )
             }
         }
+
         Button(
-            onClick = {navController.navigate("Main")},
+            onClick = {
+                viewModel.login()
+            },
+            enabled = isButtonEnabled,
             modifier = Modifier
                 .height(40.dp)
                 .fillMaxWidth()
-                .padding(horizontal = 16.dp)
-                .background(color = Color(0xFF12B956), shape = RoundedCornerShape(30.dp)),
+                .padding(horizontal = 16.dp),
+            shape = RoundedCornerShape(30.dp),
             colors = ButtonDefaults.buttonColors(
-                containerColor = Color.Transparent
+                containerColor = if (isButtonEnabled) Color(0xFF12B956) else Color(0xFF666666),
+                disabledContainerColor = Color(0xFF666666)
             )
         ) {
-            Text("Вход",
+            Text(
+                "Вход",
                 color = Color(0xFFF2F2F3),
                 fontFamily = roboto,
                 fontSize = 15.sp,
                 textAlign = TextAlign.Center,
                 style = TextStyle(
-                fontWeight = FontWeight.Medium,
+                    fontWeight = FontWeight.Medium,
                     letterSpacing = 0.1.sp,
                     lineHeight = 20.sp
-            ),)
+                )
+            )
         }
+
         Column(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -211,6 +237,7 @@ fun Auth(navController: NavHostController)
 
             Text("Забыл пароль", style = textStyle, color = Color(0xFF12B956))
         }
+
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -218,6 +245,7 @@ fun Auth(navController: NavHostController)
                 .height(1.dp)
                 .background(color = Color(0xFF4D555E))
         )
+
         Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
@@ -230,7 +258,13 @@ fun Auth(navController: NavHostController)
                     .padding(end = 8.dp)
             ) {
                 Button(
-                    onClick = {},
+                    onClick = {
+                        val intent = android.content.Intent(
+                            android.content.Intent.ACTION_VIEW,
+                            android.net.Uri.parse("https://vk.com/")
+                        )
+                        context.startActivity(intent)
+                    },
                     modifier = Modifier
                         .height(50.dp)
                         .fillMaxWidth()
@@ -240,9 +274,7 @@ fun Auth(navController: NavHostController)
                     )
                 ) {}
                 Image(
-                    painter = painterResource(
-                        id = R.drawable.vk
-                    ),
+                    painter = painterResource(id = R.drawable.vk),
                     contentDescription = "VK",
                     contentScale = ContentScale.Fit,
                     modifier = Modifier
@@ -257,7 +289,13 @@ fun Auth(navController: NavHostController)
                     .padding(start = 8.dp)
             ) {
                 Button(
-                    onClick = {},
+                    onClick = {
+                        val intent = android.content.Intent(
+                            android.content.Intent.ACTION_VIEW,
+                            android.net.Uri.parse("https://ok.ru/")
+                        )
+                        context.startActivity(intent)
+                    },
                     modifier = Modifier
                         .height(50.dp)
                         .fillMaxWidth()
@@ -272,9 +310,7 @@ fun Auth(navController: NavHostController)
                     )
                 ) {}
                 Image(
-                    painter = painterResource(
-                        id = R.drawable.ok
-                    ),
+                    painter = painterResource(id = R.drawable.ok),
                     contentDescription = "OK",
                     contentScale = ContentScale.Fit,
                     modifier = Modifier
